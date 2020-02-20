@@ -1,13 +1,14 @@
 Package: generalKSStat
 Type: Package
 Title: What the package does (short line)
-Version: 1.0
+Version: 1.0.0
 Date: 2020-02-17
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Author: Jiefei Wang
+Maintainer: <jwang96@buffalo.edu>
 Description: More about what it does (maybe more than one line)
-License: What license is it under?
+License: GPL-3.0
 RoxygenNote: 6.1.1
+Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 LinkingTo: 
     Rcpp

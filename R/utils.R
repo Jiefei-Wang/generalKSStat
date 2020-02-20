@@ -43,7 +43,13 @@ all.null<-function(...){
     all(res)
 }
 
-
+getIndexSimple<-function(n,alpha0,index){
+    if(!is.null(n)&&!is.null(alpha0)&&is.null(index)){
+        nRegion <- max(floor(alpha0 * n), 1)
+        index <- seq_len(nRegion)
+    }
+    index
+}
 
 getIndex <- function(n,alpha0,index=NULL,indexL=NULL,indexU=NULL){
     if(!is.null(index)&&!all.null(indexL,indexU)){
@@ -68,7 +74,7 @@ getIndex <- function(n,alpha0,index=NULL,indexL=NULL,indexU=NULL){
 
 
 getArgs<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
-    if(!is(stat,"generalKSStat")){
+    if(!is.generalKSStat(stat)){
         args <- getIndex(n=n,alpha0=alpha0,index=index,indexL=indexL,indexU=indexU)
         args[["statValue"]] <- stat
         return(args)
@@ -81,6 +87,14 @@ getArgs<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
         index<-stat[["index"]]
         indexU<-stat[["indexU"]]
         indexL<-stat[["indexL"]]
+    }
+    if(length(grep("+",stat$statName,fixed=TRUE))==1&&is.null(indexL)){
+        nRegion <- max(floor(alpha0 * n), 1)
+        indexL <- seq_len(nRegion)
+    }
+    if(length(grep("-",stat$statName,fixed=TRUE))==1&&is.null(indexU)){
+        nRegion <- max(floor(alpha0 * n), 1)
+        indexU <- seq_len(nRegion)
     }
     args <- getIndex(n=n,alpha0=alpha0,index=index,indexL=indexL,indexU=indexU)
     args$statValue <- stat$statValue
@@ -95,4 +109,8 @@ getStatFullName <-function(statName,indexL, indexU){
     else 
         statSign <- ""
     paste0(statName,statSign)
+}
+
+is.generalKSStat<-function(x){
+    is(x,"generalKSStat")
 }

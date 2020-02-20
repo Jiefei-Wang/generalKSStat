@@ -1,8 +1,51 @@
+#' Compute the pvalue of generalized Kolmogorov-Smirnov test statistics
+#' 
+#' Compute the pvalue of generalized Kolmogorov-Smirnov test statistics,
+#' see details on how to use the function.
+#' 
+#' @param stat a `generalKSStat` object or numeric, the statistic that the p-value
+#' is computed for. If a `generalKSStat` object is provided, there is no need to 
+#' specify the other argument unless you want to overwrite them.
+#' If a single value is provided to the parameter `stat`, you must at least 
+#' specify the sample size `n`.
+#' 
+#' @examples 
+#' ## Generate samples
+#' x <- rbeta(10, 1, 2)
+#' 
+#' 
+#' ## Perform KS test
+#' ks_res <- GKSStat(x = x, statName = "KS")
+#' 
+#' ## Compute the pvalue for the KS test
+#' GKSPvalue(stat = ks_res)
+#' 
+#' ## For any observed statistic
+#' GKSPvalue(stat = 0.2, n = 10, statName = "KS")
+#' 
+#' ## Change the detection range of the KS test
+#' ## to test only the first 3 ordered samples
+#' ## All gives the same result
+#' GKSPvalue(stat = 0.2, n = 10, alpha0 = 0.3, statName = "KS")
+#' GKSPvalue(stat = 0.2, n = 10, index = 1:3, statName = "KS")
+#' GKSPvalue(stat = 0.2, n = 10, indexL = 1:3, indexU = 1:3, statName = "KS")
+#' 
+#' 
+#' 
+#' @return A numeric value representing the pvalue
+#' @inheritParams GKSStat
+#' @inherit GKSStat details
+#' @rdname pvalue
 GKSPvalue<-function(stat , n =NULL, alpha0 = NULL, 
                      index=NULL,indexL=NULL,indexU=NULL,
                      statName = NULL){
+    if(!is.generalKSStat(stat)){
+        if(all.null(alpha0,index,indexL,indexU)){
+            alpha0 <- 1
+        }
+    }
     if(is.null(statName)){
-        if(is(stat,"generalKSStat")){
+        if(is.generalKSStat(stat)){
             statName=stat$statName
         }else{
             statName="KS"
@@ -87,6 +130,7 @@ getHCUpper<-function(stat,n){
     b<--2*const-stat^2
     (-b+sqrt(b^2-4*a*const^2))/2/a
 }
+#' @rdname pvalue
 #' @export
 HCPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
     args <- getArgs(stat=stat,n=n,alpha0=alpha0,
@@ -101,6 +145,7 @@ HCPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
 }
 
 
+#' @rdname pvalue
 #' @export
 BJPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
     args <- getArgs(stat=stat,n=n,alpha0=alpha0,
@@ -113,6 +158,7 @@ BJPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
     res
 }
 
+#' @rdname pvalue
 #' @export
 KSPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
     args <- getArgs(stat=stat,n=n,alpha0=alpha0,
@@ -128,33 +174,45 @@ KSPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
 }
 
 
+#' @rdname pvalue
 #' @export
 HCPlusPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL){
+    index <- getIndexSimple(n,alpha0,index)
     HCPvalue(stat = stat, n=n, alpha0=alpha0,
              indexL= index)
 }
+#' @rdname pvalue
 #' @export
 HCMinusPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL){
+    index <- getIndexSimple(n,alpha0,index)
     HCPvalue(stat = stat, n=n, alpha0=alpha0,
              indexU= index)
 }
+#' @rdname pvalue
 #' @export
 BJPlusPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL){
+    index <- getIndexSimple(n,alpha0,index)
     BJPvalue(stat = stat, n=n, alpha0=alpha0,
              indexL= index)
 }
+#' @rdname pvalue
 #' @export
 BJMinusPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL){
+    index <- getIndexSimple(n,alpha0,index)
     BJPvalue(stat = stat, n=n, alpha0=alpha0,
              indexU= index)
 }
+#' @rdname pvalue
 #' @export
 KSPlusPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL){
+    index <- getIndexSimple(n,alpha0,index)
     KSPvalue(stat = stat, n=n, alpha0=alpha0,
              indexL= index)
 }
+#' @rdname pvalue
 #' @export
 KSMinusPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL){
+    index <- getIndexSimple(n,alpha0,index)
     KSPvalue(stat = stat, n=n, alpha0=alpha0,
              indexU= index)
 }
