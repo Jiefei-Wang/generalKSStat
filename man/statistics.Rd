@@ -39,7 +39,7 @@ KSMinusStat(x, alpha0 = 1, index = NULL)
 \item{x}{Numeric, the samples that the test statistics will be based on.}
 
 \item{alpha0}{Numeric, controlling which ordered samples will be used in the
-statistics, see details.}
+statistics, the default value is \code{1}. see details.}
 
 \item{index}{Integer, controlling which ordered samples will be used in the
 statistics, see details.}

@@ -75,6 +75,9 @@ getIndex <- function(n,alpha0,index=NULL,indexL=NULL,indexU=NULL){
 
 getArgs<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
     if(!is.generalKSStat(stat)){
+        if(all.null(alpha0,index,indexL,indexU)){
+            alpha0 <- 1
+        }
         args <- getIndex(n=n,alpha0=alpha0,index=index,indexL=indexL,indexU=indexU)
         args[["statValue"]] <- stat
         return(args)

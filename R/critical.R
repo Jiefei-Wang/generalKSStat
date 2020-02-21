@@ -5,6 +5,7 @@
 #' 
 #' @param alpha numeric, the type I error rate for the critical value. Please do 
 #' not be confused with `alpha0`.
+#' @param n Integer, the sample size of the data.
 #' 
 #' @examples 
 #' ## Compute the critical value of the KS test

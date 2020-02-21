@@ -1,4 +1,4 @@
 library(testthat)
-library(KSGeneralStat)
+library(generalKSStat)
 
-test_check("KSGeneralStat")
+test_check("generalKSStat")

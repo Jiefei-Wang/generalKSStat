@@ -3,11 +3,14 @@
 #' Compute the pvalue of generalized Kolmogorov-Smirnov test statistics,
 #' see details on how to use the function.
 #' 
+#' @param x Numeric, the sample data.
 #' @param stat a `generalKSStat` object or numeric, the statistic that the p-value
-#' is computed for. If a `generalKSStat` object is provided, there is no need to 
-#' specify the other argument unless you want to overwrite them.
-#' If a single value is provided to the parameter `stat`, you must at least 
+#' is computed for. This parameter will be ignored if the parameter `x` is not null.
+#' If `stat` is a `generalKSStat` object, there is no need to 
+#' specify the other parameters unless you want to overwrite them.
+#' If a numeric value is provided to the parameter `stat`, you must at least 
 #' specify the sample size `n`.
+#' @param n Integer, the sample size of the data.
 #' 
 #' @examples 
 #' ## Generate samples
@@ -36,9 +39,10 @@
 #' @inheritParams GKSStat
 #' @inherit GKSStat details
 #' @rdname pvalue
-GKSPvalue<-function(stat , n =NULL, alpha0 = NULL, 
+#' @export
+GKSPvalue<-function(stat=NULL , n =NULL, alpha0 = NULL, 
                      index=NULL,indexL=NULL,indexU=NULL,
-                     statName = NULL){
+                     x=NULL, statName = NULL){
     if(!is.generalKSStat(stat)){
         if(all.null(alpha0,index,indexL,indexU)){
             alpha0 <- 1
@@ -50,6 +54,14 @@ GKSPvalue<-function(stat , n =NULL, alpha0 = NULL,
         }else{
             statName="KS"
         }
+    }
+    if(!is.null(x)){
+        if(is.null(alpha0)){
+            alpha0 <- 1
+        }
+        stat <- GKSStat(x=x,alpha0=alpha0,index=index,indexL=indexL,indexU=indexU,
+                        statName = statName,pvalue=TRUE)
+        return(getPvalue(stat))
     }
     
     if(statName=="KS"){

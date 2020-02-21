@@ -13,8 +13,8 @@
 \alias{KSMinusPvalue}
 \title{Compute the pvalue of generalized Kolmogorov-Smirnov test statistics}
 \usage{
-GKSPvalue(stat, n = NULL, alpha0 = NULL, index = NULL,
-  indexL = NULL, indexU = NULL, statName = NULL)
+GKSPvalue(stat = NULL, n = NULL, alpha0 = NULL, index = NULL,
+  indexL = NULL, indexU = NULL, x = NULL, statName = NULL)
 
 HCPvalue(stat, n = NULL, alpha0 = NULL, index = NULL,
   indexL = NULL, indexU = NULL)
@@ -39,13 +39,16 @@ KSMinusPvalue(stat, n = NULL, alpha0 = NULL, index = NULL)
 }
 \arguments{
 \item{stat}{a \code{generalKSStat} object or numeric, the statistic that the p-value
-is computed for. If a \code{generalKSStat} object is provided, there is no need to
-specify the other argument unless you want to overwrite them.
-If a single value is provided to the parameter \code{stat}, you must at least
+is computed for. This parameter will be ignored if the parameter \code{x} is not null.
+If \code{stat} is a \code{generalKSStat} object, there is no need to
+specify the other parameters unless you want to overwrite them.
+If a numeric value is provided to the parameter \code{stat}, you must at least
 specify the sample size \code{n}.}
 
+\item{n}{Integer, the sample size of the data.}
+
 \item{alpha0}{Numeric, controlling which ordered samples will be used in the
-statistics, see details.}
+statistics, the default value is \code{1}. see details.}
 
 \item{index}{Integer, controlling which ordered samples will be used in the
 statistics, see details.}
@@ -55,6 +58,8 @@ statistics, see details.}
 
 \item{indexU}{Integer, controlling which ordered samples will be used in the
 statistics, see details.}
+
+\item{x}{Numeric, the sample data.}
 
 \item{statName}{Character, the name of the statistic that will be computed.
 The default is "KS".}

@@ -40,7 +40,7 @@ test_that("BJ-",{
 test_that("HC",{
     stat <- GKSStat(x=x,index=index,statName = "HC",pvalue=TRUE)
     expect_equal(round(stat$statValue,3),0.667)
-    expect_equal(round(stat$pvalue,3),0.940)
+    expect_equal(round(stat$pvalue,3),0.941)
 })
 test_that("HC+",{
     stat <- GKSStat(x=x,index=index,statName = "HC+",pvalue=TRUE)

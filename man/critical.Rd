@@ -42,8 +42,10 @@ KSMinusCritical(alpha, n = NULL, alpha0 = NULL, index = NULL)
 \item{alpha}{numeric, the type I error rate for the critical value. Please do
 not be confused with \code{alpha0}.}
 
+\item{n}{Integer, the sample size of the data.}
+
 \item{alpha0}{Numeric, controlling which ordered samples will be used in the
-statistics, see details.}
+statistics, the default value is \code{1}. see details.}
 
 \item{index}{Integer, controlling which ordered samples will be used in the
 statistics, see details.}

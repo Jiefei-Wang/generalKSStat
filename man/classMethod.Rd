@@ -2,18 +2,30 @@
 % Please edit documentation in R/class-export.R
 \name{print.generalKSStat}
 \alias{print.generalKSStat}
-\title{print function for the generalKSStat S3 object}
+\alias{getStatName}
+\alias{getStatValue}
+\alias{getPvalue}
+\title{Class methods for the generalKSStat S3 object}
 \usage{
 \method{print}{generalKSStat}(x, ...)
+
+getStatName(x)
+
+getStatValue(x)
+
+getPvalue(x)
 }
 \arguments{
 \item{x}{the generalKSStat S3 object}
+
+\item{...}{Ignored.}
 }
 \value{
-invisible x
+print: invisible \code{x}
+other fucntions: a numeric value
 }
 \description{
-print function for the generalKSStat S3 object
+Class methods for the generalKSStat S3 object
 }
 \examples{
 

@@ -1,0 +1,146 @@
+---
+title: "Vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(generalKSStat)
+```
+# Introduction 
+## The statistics
+There has been a lot of goodness-of-fit tests been proposed by different authors to deal with different type of data. The most popular and well-know statistic among them is probably the Kolmogorov-Smirnov(KS) statistic, which assumes that the samples are independently and identically distributed and use the geometrical distance between the null and empirical distributions as the measure of the evidence against the null. In this vignette, we will assume the null distribution is the uniform(0,1) distribution unless stated otherwise. The KS statistic is defined as
+
+$$KS = \sup\limits_{x\in (0,1)}\left|\hat{F}(x)-F(x)\right|$$
+
+Though the idea of the KS statistic is straightforward, one may argue that the statistic cannot provide a proper power if the true distribution only deviates from the null distribution at two tails, that is, the KS test has a weak power to detect the difference between $\hat{F}(x)$ and $F(x)$ for $x$ closed to 0 or 1. The reason is simple, the variances of $\hat{F}(x)$ are not the same for all $x$, the maximum occurs at $x=0.5$. Therefore, the distance $\left|\hat{F}(x)-F(x)\right|$ is usually large for $x$ in the middle even when the null hypothesis is true, this property inflates the rejection region of the KS statistic and makes it hard to detect the difference at tails. 
+
+Suppose that $X_1,X_2,...,X_n$ are n iid samples from the true distribution. Let $X_{(1)},X_{(2)},...,X_{(n)}$ be the ordered statistics of the samples where $X_{(1)}\leq X_{(2)}\leq ...\leq X_{(n)}$, The KS statistic can be written as
+
+
+$$
+KS^+ = \max\limits_{i =1,...,n} i/n-x_{(i)}\\
+KS^- = \max\limits_{i =1,...,n} x_{(i)}-(i-1)/n\\
+KS = \max(KS^+,KS^-)\\
+$$
+
+Serveral statistics has been proposed to overcome the unequal variance problem. The higher criticism statistic, which uses the variance to standardize the differences, has the form of
+
+$$
+HC^+ = \max\limits_{i =1,...,n}
+\sqrt{n}\frac{ x_{(i)}-(i-1)/n}{\sqrt{x_{(i)}(1-x_{(i)})}}
+$$
+
+The original higher criticism(HC) statistic is proposed for dealing with pvalues and thus only has an one-sided formula, here we use the same idea and generalize to make it consistent with the KS statistic.
+
+$$
+HC^- = \max\limits_{i =1,...,n} \sqrt{n}\frac{i/n-x_{(i)}}{\sqrt{x_{(i)}(1-x_{(i)})}} \\
+HC = \max(HC^+,HC^-)
+$$
+
+The Berk-Jone(BJ) statistic pushs the idea of standardization even further.
+
+$$
+BJ^+ = \max\limits_{i =1,...,n} B_i(x_i)\\
+BJ^- = \max\limits_{i =1,...,n} 1-B_i(x_i)\\
+BJ = \max(BJ^+,BJ^-)
+$$
+
+Where $B_i$ is the CDF of Beta$(i,n-i+1)$. 
+
+## The general rejection rule
+Though the weights are different for the aforementioned statistics, they share a common formula. The rejection rule of these statistics can be characterized by two sequences $\{l_u\}$ and $\{u_i\}$, that is
+
+
+<p style="background-color: lightgray" align="center">
+Reject the test if and only if there exists at least one $i$ such that $x_{(i)}<l_i$ or $x_{(i)}>u_i$
+</p>
+
+
+where the sequences $\{l_i\}$ and $\{u_i\}$ is determined by the statistics. remarkably, the one-sided version of the aforementioned statistics(e.g. $KS^+$) also fits into the above rejection rule where $\{l_i\}$ or $\{u_i\}$ euqals 0 depending on the side. Therefore, by controlling the value of $\{l_i\}$ and $\{u_i\}$, we can control which area of $F(x)$ that will be detected. In the package, this can be done via the parameter $alpha0$, $index$,$indexU$,$indexL$.
+
+
+# Example
+In this example, we first generate the example data from a beta distribution and apply the "native" statistics to the data
+```{r}
+set.seed(123)
+n <- 50L
+x <- rbeta(n, 1, 1.5)
+
+## plot the empirical vs null CDF
+plot(ecdf(x))
+abline(a = 0,b = 1)
+
+## KS stat
+GKSStat(x = x, statName = "KS")
+
+## HC stat
+GKSStat(x = x, statName = "HC")
+
+## BJ stat
+GKSStat(x = x, statName = "BJ")
+```
+
+Next, we restrict our detection range from $x_{(25)}$ to $x_{(50)}$  by providing the parameter `index` to the function.
+```{r}
+index <- 25L : 50L
+
+## KS stat
+GKSStat(x = x, index = index, statName = "KS")
+
+## HC stat
+GKSStat(x = x, index = index, statName = "HC")
+
+## BJ stat
+GKSStat(x = x, index = index, statName = "BJ")
+```
+Since the largest deviation from the null occurs in the interval $(x_{(25)},x_{(50)})$, shortening the detection range increases the power of the test. Furthermore, because the CDF of the true distribution is always greater than the CDF of the null distribution, we can increase our test power by performing an one-sided test, this can be done via `indexL` or `indexU` parameters
+```{r}
+indexL <- 25L : 50L
+
+## One-sided KS+ stat
+GKSStat(x = x, indexL = indexL, statName = "KS")
+
+## One-sided HC+ stat
+GKSStat(x = x, indexL = indexL, statName = "HC")
+
+## One-sided BJ+ stat
+GKSStat(x = x, indexL = indexL, statName = "BJ")
+```
+The parameter `indexL` corresponds to the detection range of the tests that favor right-skewed distribution(e.g. $KS^+$, $BJ^+$ and $HC^+$), and `indexU` corresponds to the left-skewed tests(e.g. $KS^-$, $BJ^-$ and $HC^-$). A combination of `indexL` and `indexU` is supported but the use of it should be justified by the alternative distribution. An equivalent form of the above tests are
+```{r}
+index <- 25L : 50L
+
+## One-sided KS+ stat
+GKSStat(x = x, index = index, statName = "KS+")
+
+## One-sided HC+ stat
+GKSStat(x = x, index = index, statName = "HC+")
+
+## One-sided BJ+ stat
+GKSStat(x = x, index = index, statName = "BJ+")
+```
+These will yield the same results as the previous code chunk shows.
+
+#Session info
+```{r}
+sessionInfo()
+```
+
+
+
+
+
+
+
+

@@ -37,7 +37,6 @@ get_h <- function(value,func_data){
 
 
 
-#' @export
 orderedProb <- function(l,h){
     if(any(l>=h)) return(0)
     n <- length(l)

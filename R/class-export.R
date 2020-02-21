@@ -13,9 +13,11 @@
     structure(stat,class = "generalKSStat")
 }
 
-#' print function for the generalKSStat S3 object
+#' Class methods for the generalKSStat S3 object
+#' 
 #' 
 #' @param x the generalKSStat S3 object
+#' @param ... Ignored.
 #' @examples 
 #' 
 #' ## Generate samples
@@ -24,7 +26,11 @@
 #' ## Perform KS test
 #' GKSStat(x = x, statName = "KS")
 #' 
-#' @return invisible x
+#' @return  
+#' print: invisible `x`
+#' other fucntions: a numeric value
+#' 
+#' @rdname classMethod
 #' @export
 print.generalKSStat <- function(x,...){
     #print(x$statValue)
@@ -36,4 +42,20 @@ print.generalKSStat <- function(x,...){
     if(!is.null(x$pvalue))
         cat("P-value:", x$pvalue)
     invisible(x)
+}
+
+#' @rdname classMethod
+#' @export
+getStatName<-function(x){
+    x$statName
+}
+#' @rdname classMethod
+#' @export
+getStatValue<-function(x){
+    x$statValue
+}
+#' @rdname classMethod
+#' @export
+getPvalue<-function(x){
+    x$pvalue
 }
