@@ -128,20 +128,7 @@ getC = function(x, a){
     return(out)
 }
 
-getHCLower<-function(stat,n){
-    stat <- stat/sqrt(n)
-    const<-seq_len(n)/n
-    a<-1+stat^2
-    b<--2*const-stat^2
-    (-b-sqrt(b^2-4*a*const^2))/2/a
-}
-getHCUpper<-function(stat,n){
-    stat <- stat/sqrt(n)
-    const<-(seq_len(n)-1)/n
-    a<-1+stat^2
-    b<--2*const-stat^2
-    (-b+sqrt(b^2-4*a*const^2))/2/a
-}
+
 #' @rdname pvalue
 #' @export
 HCPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
@@ -150,8 +137,9 @@ HCPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
     
     n <- args$n
     stat <- args$statValue
-    l=getHCLower(stat,n)
-    h=getHCUpper(stat,n)
+    localCritical <- HCLocalCritical(stat,n)
+    l=localCritical$l
+    h=localCritical$h
     res=1-genericPvalue(l,h,indexL=args$indexL,indexU =args$indexU)
     res
 }
@@ -164,8 +152,9 @@ BJPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
                     index=index,indexL=indexL,indexU=indexU)
     n <- args$n
     stat <- args$statValue
-    l=sapply(1:n,function(x)qbeta(stat,x,n-x+1))
-    h=sapply(1:n,function(x)qbeta(1 - stat,x,n-x+1))
+    localCritical <- BJLocalCritical(stat,n)
+    l=localCritical$l
+    h=localCritical$h
     res=1-genericPvalue(l,h,indexL=args$indexL,indexU =args$indexU)
     res
 }
@@ -177,10 +166,9 @@ KSPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
                     index=index,indexL=indexL,indexU=indexU)
     n <- args$n
     stat <- args$statValue
-    l <- 1:n/n - stat
-    h <- stat + 1:n/n-1/n
-    l[l<0]=0
-    h[h>1]=1
+    localCritical <- KSLocalCritical(stat,n)
+    l=localCritical$l
+    h=localCritical$h
     res=1-genericPvalue(l,h,indexL=args$indexL,indexU =args$indexU)
     res
 }
