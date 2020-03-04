@@ -5,37 +5,24 @@
 \alias{HCPvalue}
 \alias{BJPvalue}
 \alias{KSPvalue}
-\alias{HCPlusPvalue}
-\alias{HCMinusPvalue}
-\alias{BJPlusPvalue}
-\alias{BJMinusPvalue}
-\alias{KSPlusPvalue}
-\alias{KSMinusPvalue}
 \title{Compute the pvalue of generalized Kolmogorov-Smirnov test statistics}
 \usage{
-GKSPvalue(stat = NULL, n = NULL, alpha0 = NULL, index = NULL,
-  indexL = NULL, indexU = NULL, x = NULL, statName = NULL)
+GKSPvalue(
+  stat = NULL,
+  n = NULL,
+  alpha0 = NULL,
+  index = NULL,
+  indexL = NULL,
+  indexU = NULL,
+  x = NULL,
+  statName = NULL
+)
 
-HCPvalue(stat, n = NULL, alpha0 = NULL, index = NULL,
-  indexL = NULL, indexU = NULL)
+HCPvalue(stat, n, indexL = NULL, indexU = NULL)
 
-BJPvalue(stat, n = NULL, alpha0 = NULL, index = NULL,
-  indexL = NULL, indexU = NULL)
+BJPvalue(stat, n, indexL = NULL, indexU = NULL)
 
-KSPvalue(stat, n = NULL, alpha0 = NULL, index = NULL,
-  indexL = NULL, indexU = NULL)
-
-HCPlusPvalue(stat, n = NULL, alpha0 = NULL, index = NULL)
-
-HCMinusPvalue(stat, n = NULL, alpha0 = NULL, index = NULL)
-
-BJPlusPvalue(stat, n = NULL, alpha0 = NULL, index = NULL)
-
-BJMinusPvalue(stat, n = NULL, alpha0 = NULL, index = NULL)
-
-KSPlusPvalue(stat, n = NULL, alpha0 = NULL, index = NULL)
-
-KSMinusPvalue(stat, n = NULL, alpha0 = NULL, index = NULL)
+KSPvalue(stat, n, indexL = NULL, indexU = NULL)
 }
 \arguments{
 \item{stat}{a \code{generalKSStat} object or numeric, the statistic that the p-value
@@ -82,7 +69,7 @@ are the samples, the value of \code{T} is purely based on the value of
 of \code{X1},\code{X2},...,\code{Xn}. Moreover, the rejection region of the
 statistic \code{T} can be written as a set of rejection regions of the
 ordered samples \code{X_(1)},\code{X_(2)},...,\code{X_(n)}. In other words,
-there exist two sequences \code{{l_i}} and \code{{u_i}} for \code{i=1,...,n} and
+there exist two sequences \code{{l_i}} and \code{{u_i}} for \verb{i=1,...,n} and
 the statistic \code{T} is in the rejection region if and only if there exist
 one \code{i} such that \code{X_(i) < l_i} or \code{X_(i) > u_i}.
 
@@ -98,7 +85,7 @@ sequences of \code{{l_i}} and \code{{u_i}}. Therefore, the parameter \code{alpha
 will be considered in the test procedure. If no argument is provided, all \code{l_i}s
 and \code{u_i}s will be compared with their corresponding ordered sample \code{X_(i)}.
 This yields the traditional test statistics. If \code{alpha0} is used, the
-test statistics is based on \code{X_(1),...X_(k)} where k is the nearest integer of
+test statistics is based on \verb{X_(1),...X_(k)} where k is the nearest integer of
 \code{alpha0*n}. If \code{index} is provided, only \code{X_(i)} for \code{i} in \code{index} will be considered
 in a test. If \code{indexL} and/or \code{indexU} is not \code{NULL}, only \code{l_i} for \code{i} in
 \code{indexL} and \code{u_i} for \code{i} in \code{indexU} will be used in a test. These can be used to

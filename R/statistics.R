@@ -75,33 +75,26 @@ GKSStat <- function(
     statName = c("KS","KS+","KS-","BJ","BJ+","BJ-","HC","HC+","HC-"),
     pvalue = TRUE){
     statName <- match.arg(statName)
-    if(statName=="KS"){
-        stat <- KSStat(x=x,alpha0=alpha0,index=index,indexL=indexL,indexU=indexU)
-    }
-    if(statName=="KS+"){
-        stat <- KSPlusStat(x=x,alpha0=alpha0,index=index)
-    }
-    if(statName=="KS-"){
-        stat <- KSMinusStat(x=x,alpha0=alpha0,index=index)
-    }
-    if(statName=="BJ"){
-        stat <- BJStat(x=x,alpha0=alpha0,index=index,indexL=indexL,indexU=indexU)
-    }
-    if(statName=="BJ+"){
-        stat <- BJPlusStat(x=x,alpha0=alpha0,index=index)
-    }
-    if(statName=="BJ-"){
-        stat <- BJMinusStat(x=x,alpha0=alpha0,index=index)
-    }
-    if(statName=="HC"){
-        stat <- HCStat(x=x,alpha0=alpha0,index=index,indexL=indexL,indexU=indexU)
-    }
-    if(statName=="HC+"){
-        stat <- HCPlusStat(x=x,alpha0=alpha0,index=index)
-    }
-    if(statName=="HC-"){
-        stat <- HCMinusStat(x=x,alpha0=alpha0,index=index)
-    }
+    
+    sideIndex <- getTwoSideIndex(statName=statName,
+                                 n=length(x),
+                                 alpha0=alpha0,
+                                 index=index,
+                                 indexL=indexL,
+                                 indexU=indexU)
+    indexL <- sideIndex$indexL
+    indexU <- sideIndex$indexU
+    statName <-  sideIndex$statName
+    statValue <- call_func(root = "Stat",prefix = statName,
+                      x=x, 
+                      indexL=indexL,
+                      indexU=indexU)
+    stat <- .generalKSStat(statName = statName,
+                   statValue= statValue,
+                   n=length(x),
+                   indexL=indexL,
+                   indexU=indexU)
+    
     if(pvalue)
         stat$pvalue <- GKSPvalue(stat=stat)
     stat
@@ -110,98 +103,41 @@ GKSStat <- function(
 
 
 ## Generic statistical function
-genericStat<-function(statName,isMin , levelFunc,
-                      x,alpha0,
-                      index=NULL,indexL=NULL,indexU=NULL){
-    localLevels <- partialLevelStat(statFunc = levelFunc,
-                                 x = x,
-                                 alpha0 = alpha0,
-                                 index= index,
-                                 indexL = indexL,
-                                 indexU = indexU
+genericStat<-function(levelFunc,
+                      x, indexL=NULL,indexU=NULL){
+    stat <- partialLevelStat(statFunc = levelFunc,
+                                    x = x,
+                                    indexL = indexL,
+                                    indexU = indexU
     )
-    if(isMin){
-        stat <- min(localLevels)
-    }else{
-        stat <- max(localLevels)
-    }
-    .generalKSStat(statName = statName,
-               statValue= stat,
-               n=length(x),
-               alpha0=alpha0,
-               index=index,
-               indexL=indexL,
-               indexU=indexU)
-}
-
-
-
-
-
-
-#' @rdname statistics
-#' @export
-HCStat<-function(x,alpha0 = 1, index=NULL,indexL=NULL,indexU=NULL){
-    statName <- getStatFullName(statName="HC",indexL=indexL,indexU=indexU)
-    genericStat(statName=statName, isMin = FALSE,levelFunc = HCLevel,
-                x=x,alpha0=alpha0,
-                index=index,indexL=indexL,indexU=indexU)
 }
 
 #' @rdname statistics
 #' @export
-BJStat<-function(x,alpha0 = 1, index=NULL,indexL=NULL,indexU=NULL){
-    statName <- getStatFullName(statName="BJ",indexL=indexL,indexU=indexU)
-    genericStat(statName=statName, isMin = TRUE,levelFunc = BJLevel,
-                x=x,alpha0=alpha0,
-                index=index,indexL=indexL,indexU=indexU)
+HCStat<-function(x,indexL=NULL,indexU=NULL){
+    partialLevelStat(statFunc = HCLevel,
+                     x = x,
+                     indexL = indexL,
+                     indexU = indexU
+    )
 }
 
 #' @rdname statistics
 #' @export
-KSStat<-function(x,alpha0=1,index=NULL,indexL=NULL,indexU=NULL){
-    statName <- getStatFullName(statName="KS",indexL=indexL,indexU=indexU)
-    genericStat(statName=statName, isMin = FALSE,levelFunc = KSLevel,
-                x=x,alpha0=alpha0,
-                index=index,indexL=indexL,indexU=indexU)
+BJStat<-function(x,indexL=NULL,indexU=NULL){
+    partialLevelStat(statFunc = BJLevel,
+                     x = x,
+                     indexL = indexL,
+                     indexU = indexU
+    )
 }
 
 #' @rdname statistics
 #' @export
-HCPlusStat<-function(x,alpha0 = 1, index=NULL){
-    index <- getIndexSimple(length(x),alpha0,index)
-    HCStat(x=x,alpha0=alpha0,indexL=index)
-}
-#' @rdname statistics
-#' @export
-HCMinusStat<-function(x,alpha0 = 1, index=NULL){
-    index <- getIndexSimple(length(x),alpha0,index)
-    HCStat(x=x,alpha0=alpha0,indexU=index)
-}
-
-#' @rdname statistics
-#' @export
-BJPlusStat<-function(x,alpha0 = 1, index=NULL){
-    index <- getIndexSimple(length(x),alpha0,index)
-    BJStat(x=x,alpha0=alpha0,indexL=index)
-}
-#' @rdname statistics
-#' @export
-BJMinusStat<-function(x,alpha0 = 1, index=NULL){
-    index <- getIndexSimple(length(x),alpha0,index)
-    BJStat(x=x,alpha0=alpha0,indexU=index)
-}
-
-#' @rdname statistics
-#' @export
-KSPlusStat <- function(x,alpha0=1,index=NULL){
-    index <- getIndexSimple(length(x),alpha0,index)
-    KSStat(x=x,alpha0=alpha0,indexL=index)
-}
-
-#' @rdname statistics
-#' @export
-KSMinusStat <- function(x,alpha0=1,index=NULL){
-    index <- getIndexSimple(length(x),alpha0,index)
-    KSStat(x=x,alpha0=alpha0,indexU=index)
+KSStat<-function(x,indexL=NULL,indexU=NULL){
+    partialLevelStat(statFunc = KSLevel,
+                     x = x,
+                     indexL = indexL,
+                     indexU = indexU
+    )
 }

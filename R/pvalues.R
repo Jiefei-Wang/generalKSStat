@@ -43,72 +43,48 @@
 GKSPvalue<-function(stat=NULL , n =NULL, alpha0 = NULL, 
                      index=NULL,indexL=NULL,indexU=NULL,
                      x=NULL, statName = NULL){
-    if(!is.generalKSStat(stat)){
-        if(all.null(alpha0,index,indexL,indexU)){
-            alpha0 <- 1
-        }
-    }
-    if(is.null(statName)){
-        if(is.generalKSStat(stat)){
-            statName=stat$statName
-        }else{
-            statName="KS"
-        }
-    }
-    if(!is.null(x)){
-        if(is.null(alpha0)){
-            alpha0 <- 1
-        }
-        stat <- GKSStat(x=x,alpha0=alpha0,index=index,indexL=indexL,indexU=indexU,
-                        statName = statName,pvalue=TRUE)
-        return(getPvalue(stat))
-    }
     
-    if(statName=="KS"){
-        stat <- KSPvalue(stat=stat,n=n,alpha0=alpha0,
-                       index=index,indexL=indexL,indexU=indexU)
-        return(stat)
+    if(is.generalKSStat(stat)){
+        statName <- stat$statName
+        statValue <- stat$statValue
+        n <- stat$n
+        indexL <- stat$indexL
+        indexU <- stat$indexU
+    }else{
+        statName <- match.arg(statName,
+                              c("KS","KS+","KS-","BJ","BJ+","BJ-","HC","HC+","HC-"))
+        statValue <- stat
+        if(!is.null(x)){
+            stat <- GKSStat(x=x,alpha0=alpha0,index=index,
+                            indexL=indexL,indexU=indexU,
+                            statName = statName,pvalue=TRUE)
+            return(getPvalue(stat))
+        }
+        
     }
-    if(statName=="KS+"){
-        stat <- KSPlusPvalue(stat=stat,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    if(statName=="KS-"){
-        stat <- KSMinusPvalue(stat=stat,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    if(statName=="BJ"){
-        stat <- BJPvalue(stat=stat,n=n,alpha0=alpha0,
-                       index=index,indexL=indexL,indexU=indexU)
-        return(stat)
-    }
-    if(statName=="BJ+"){
-        stat <- BJPlusPvalue(stat=stat,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    if(statName=="BJ-"){
-        stat <- BJMinusPvalue(stat=stat,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    if(statName=="HC"){
-        stat <- HCPvalue(stat=stat,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    if(statName=="HC+"){
-        stat <- HCPlusPvalue(stat=stat,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    if(statName=="HC-"){
-        stat <- HCMinusPvalue(stat=stat,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    stop("Undefined stat name:",statName)
+    stopifnot(!is.null(n))
+    sideIndex <- getTwoSideIndex(statName=statName,
+                                 n=n,
+                                 alpha0=alpha0,
+                                 index=index,
+                                 indexL=indexL,
+                                 indexU=indexU)
+    indexL <- sideIndex$indexL
+    indexU <- sideIndex$indexU
+    pvalue <- call_func(root = "Pvalue",prefix = sideIndex$statName,
+                        stat=statValue,n=n,indexL=indexL,indexU=indexU)
+    
+    return(pvalue)
 }
 
 
 
 
-genericPvalue<-function(l,h,indexL,indexU){
+genericPvalue<-function(statName,statValue ,n=n,indexL,indexU){
+    localCritical <- call_func(root = statName,postfix = "LocalCritical",
+              stat=statValue,n=n)
+    l=localCritical$l
+    h=localCritical$h
     if(length(indexL)!=0){
         l[-indexL] <- 0
     }else{
@@ -123,96 +99,22 @@ genericPvalue<-function(l,h,indexL,indexU){
 }
 
 
-getC = function(x, a){
-    out=(x+(a^2-a*(a^2+4*(1-x)*x)^0.5)/2)/(1+a^2);
-    return(out)
+
+#' @rdname pvalue
+#' @export
+HCPvalue<-function(stat,n,indexL=NULL,indexU=NULL){
+    res=1-genericPvalue("HC",statValue=stat,n=n,indexL=indexL,indexU =indexU)
 }
 
 
 #' @rdname pvalue
 #' @export
-HCPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
-    args <- getArgs(stat=stat,n=n,alpha0=alpha0,
-                    index=index,indexL=indexL,indexU=indexU)
-    
-    n <- args$n
-    stat <- args$statValue
-    localCritical <- HCLocalCritical(stat,n)
-    l=localCritical$l
-    h=localCritical$h
-    res=1-genericPvalue(l,h,indexL=args$indexL,indexU =args$indexU)
-    res
-}
-
-
-#' @rdname pvalue
-#' @export
-BJPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
-    args <- getArgs(stat=stat,n=n,alpha0=alpha0,
-                    index=index,indexL=indexL,indexU=indexU)
-    n <- args$n
-    stat <- args$statValue
-    localCritical <- BJLocalCritical(stat,n)
-    l=localCritical$l
-    h=localCritical$h
-    res=1-genericPvalue(l,h,indexL=args$indexL,indexU =args$indexU)
-    res
+BJPvalue<-function(stat,n,indexL=NULL,indexU=NULL){
+    res=1-genericPvalue("BJ",statValue=stat,n=n,indexL=indexL,indexU =indexU)
 }
 
 #' @rdname pvalue
 #' @export
-KSPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
-    args <- getArgs(stat=stat,n=n,alpha0=alpha0,
-                    index=index,indexL=indexL,indexU=indexU)
-    n <- args$n
-    stat <- args$statValue
-    localCritical <- KSLocalCritical(stat,n)
-    l=localCritical$l
-    h=localCritical$h
-    res=1-genericPvalue(l,h,indexL=args$indexL,indexU =args$indexU)
-    res
-}
-
-
-#' @rdname pvalue
-#' @export
-HCPlusPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL){
-    index <- getIndexSimple(n,alpha0,index)
-    HCPvalue(stat = stat, n=n, alpha0=alpha0,
-             indexL= index)
-}
-#' @rdname pvalue
-#' @export
-HCMinusPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL){
-    index <- getIndexSimple(n,alpha0,index)
-    HCPvalue(stat = stat, n=n, alpha0=alpha0,
-             indexU= index)
-}
-#' @rdname pvalue
-#' @export
-BJPlusPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL){
-    index <- getIndexSimple(n,alpha0,index)
-    BJPvalue(stat = stat, n=n, alpha0=alpha0,
-             indexL= index)
-}
-#' @rdname pvalue
-#' @export
-BJMinusPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL){
-    index <- getIndexSimple(n,alpha0,index)
-    BJPvalue(stat = stat, n=n, alpha0=alpha0,
-             indexU= index)
-}
-#' @rdname pvalue
-#' @export
-KSPlusPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL){
-    index <- getIndexSimple(n,alpha0,index)
-    KSPvalue(stat = stat, n=n, alpha0=alpha0,
-             indexL= index)
-}
-#' @rdname pvalue
-#' @export
-KSMinusPvalue<-function(stat,n=NULL,alpha0=NULL,index=NULL){
-    index <- getIndexSimple(n,alpha0,index)
-    KSPvalue(stat = stat, n=n, alpha0=alpha0,
-             indexU= index)
+KSPvalue<-function(stat,n,indexL=NULL,indexU=NULL){
+    res=1-genericPvalue("KS",statValue=stat,n=n,indexL=indexL,indexU =indexU)
 }

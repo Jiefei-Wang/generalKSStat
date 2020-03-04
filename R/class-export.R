@@ -1,15 +1,9 @@
-.generalKSStat<-function(statName,statValue,n,alpha0=NULL,
-                     index=NULL,indexL=NULL,indexU=NULL){
+.generalKSStat<-function(statName,statValue,n,indexL=NULL,indexU=NULL){
     stat <- list(statName = statName,
                  statValue = statValue,
                  n=n)
-    if(all.null(index,indexL,indexU)){
-    stat[["alpha0"]]=alpha0
-    }else{
-        stat[["index"]]=index
-        stat[["indexL"]]=indexL
-        stat[["indexU"]]=indexU
-    }
+    stat[["indexL"]]=indexL
+    stat[["indexU"]]=indexU
     structure(stat,class = "generalKSStat")
 }
 

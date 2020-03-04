@@ -5,38 +5,23 @@
 \alias{HCCritical}
 \alias{BJCritical}
 \alias{KSCritical}
-\alias{HCPlusCritical}
-\alias{HCMinusCritical}
-\alias{BJPlusCritical}
-\alias{BJMinusCritical}
-\alias{KSPlusCritical}
-\alias{KSMinusCritical}
 \title{Compute the critical value of generalized Kolmogorov-Smirnov test statistics}
 \usage{
-GKSCritical(alpha, n = NULL, alpha0 = 1, index = NULL,
-  indexL = NULL, indexU = NULL, statName = c("KS", "KS+", "KS-",
-  "BJ", "BJ+", "BJ-", "HC", "HC+", "HC-"))
+GKSCritical(
+  alpha,
+  n,
+  alpha0 = 1,
+  index = NULL,
+  indexL = NULL,
+  indexU = NULL,
+  statName = c("KS", "KS+", "KS-", "BJ", "BJ+", "BJ-", "HC", "HC+", "HC-")
+)
 
-HCCritical(alpha, n = NULL, alpha0 = NULL, index = NULL,
-  indexL = NULL, indexU = NULL)
+HCCritical(alpha, n = NULL, indexL = NULL, indexU = NULL)
 
-BJCritical(alpha, n = NULL, alpha0 = NULL, index = NULL,
-  indexL = NULL, indexU = NULL)
+BJCritical(alpha, n = NULL, indexL = NULL, indexU = NULL)
 
-KSCritical(alpha, n = NULL, alpha0 = NULL, index = NULL,
-  indexL = NULL, indexU = NULL)
-
-HCPlusCritical(alpha, n = NULL, alpha0 = NULL, index = NULL)
-
-HCMinusCritical(alpha, n = NULL, alpha0 = NULL, index = NULL)
-
-BJPlusCritical(alpha, n = NULL, alpha0 = NULL, index = NULL)
-
-BJMinusCritical(alpha, n = NULL, alpha0 = NULL, index = NULL)
-
-KSPlusCritical(alpha, n = NULL, alpha0 = NULL, index = NULL)
-
-KSMinusCritical(alpha, n = NULL, alpha0 = NULL, index = NULL)
+KSCritical(alpha, n = NULL, indexL = NULL, indexU = NULL)
 }
 \arguments{
 \item{alpha}{numeric, the type I error rate for the critical value. Please do
@@ -77,7 +62,7 @@ are the samples, the value of \code{T} is purely based on the value of
 of \code{X1},\code{X2},...,\code{Xn}. Moreover, the rejection region of the
 statistic \code{T} can be written as a set of rejection regions of the
 ordered samples \code{X_(1)},\code{X_(2)},...,\code{X_(n)}. In other words,
-there exist two sequences \code{{l_i}} and \code{{u_i}} for \code{i=1,...,n} and
+there exist two sequences \code{{l_i}} and \code{{u_i}} for \verb{i=1,...,n} and
 the statistic \code{T} is in the rejection region if and only if there exist
 one \code{i} such that \code{X_(i) < l_i} or \code{X_(i) > u_i}.
 
@@ -93,7 +78,7 @@ sequences of \code{{l_i}} and \code{{u_i}}. Therefore, the parameter \code{alpha
 will be considered in the test procedure. If no argument is provided, all \code{l_i}s
 and \code{u_i}s will be compared with their corresponding ordered sample \code{X_(i)}.
 This yields the traditional test statistics. If \code{alpha0} is used, the
-test statistics is based on \code{X_(1),...X_(k)} where k is the nearest integer of
+test statistics is based on \verb{X_(1),...X_(k)} where k is the nearest integer of
 \code{alpha0*n}. If \code{index} is provided, only \code{X_(i)} for \code{i} in \code{index} will be considered
 in a test. If \code{indexL} and/or \code{indexU} is not \code{NULL}, only \code{l_i} for \code{i} in
 \code{indexL} and \code{u_i} for \code{i} in \code{indexU} will be used in a test. These can be used to

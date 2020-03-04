@@ -11,7 +11,7 @@ Description: The package computes goodness-of-fit test statistics and their p-va
     The algorithm works for the sample size up to 25,000.
 License: GPL-3
 SystemRequirements: C++11
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 LinkingTo: 
@@ -19,7 +19,8 @@ LinkingTo:
 Imports: 
     Rcpp,
     methods,
-    stats
+    stats,
+    digest
 Suggests: 
     testthat,
     knitr,

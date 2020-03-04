@@ -5,35 +5,23 @@
 \alias{HCStat}
 \alias{BJStat}
 \alias{KSStat}
-\alias{HCPlusStat}
-\alias{HCMinusStat}
-\alias{BJPlusStat}
-\alias{BJMinusStat}
-\alias{KSPlusStat}
-\alias{KSMinusStat}
 \title{Compute generalized Kolmogorov-Smirnov test statistics}
 \usage{
-GKSStat(x, alpha0 = 1, index = NULL, indexL = NULL, indexU = NULL,
-  statName = c("KS", "KS+", "KS-", "BJ", "BJ+", "BJ-", "HC", "HC+",
-  "HC-"), pvalue = TRUE)
+GKSStat(
+  x,
+  alpha0 = 1,
+  index = NULL,
+  indexL = NULL,
+  indexU = NULL,
+  statName = c("KS", "KS+", "KS-", "BJ", "BJ+", "BJ-", "HC", "HC+", "HC-"),
+  pvalue = TRUE
+)
 
-HCStat(x, alpha0 = 1, index = NULL, indexL = NULL, indexU = NULL)
+HCStat(x, indexL = NULL, indexU = NULL)
 
-BJStat(x, alpha0 = 1, index = NULL, indexL = NULL, indexU = NULL)
+BJStat(x, indexL = NULL, indexU = NULL)
 
-KSStat(x, alpha0 = 1, index = NULL, indexL = NULL, indexU = NULL)
-
-HCPlusStat(x, alpha0 = 1, index = NULL)
-
-HCMinusStat(x, alpha0 = 1, index = NULL)
-
-BJPlusStat(x, alpha0 = 1, index = NULL)
-
-BJMinusStat(x, alpha0 = 1, index = NULL)
-
-KSPlusStat(x, alpha0 = 1, index = NULL)
-
-KSMinusStat(x, alpha0 = 1, index = NULL)
+KSStat(x, indexL = NULL, indexU = NULL)
 }
 \arguments{
 \item{x}{Numeric, the samples that the test statistics will be based on.}
@@ -80,7 +68,7 @@ are the samples, the value of \code{T} is purely based on the value of
 of \code{X1},\code{X2},...,\code{Xn}. Moreover, the rejection region of the
 statistic \code{T} can be written as a set of rejection regions of the
 ordered samples \code{X_(1)},\code{X_(2)},...,\code{X_(n)}. In other words,
-there exist two sequences \code{{l_i}} and \code{{u_i}} for \code{i=1,...,n} and
+there exist two sequences \code{{l_i}} and \code{{u_i}} for \verb{i=1,...,n} and
 the statistic \code{T} is in the rejection region if and only if there exist
 one \code{i} such that \code{X_(i) < l_i} or \code{X_(i) > u_i}.
 
@@ -96,7 +84,7 @@ sequences of \code{{l_i}} and \code{{u_i}}. Therefore, the parameter \code{alpha
 will be considered in the test procedure. If no argument is provided, all \code{l_i}s
 and \code{u_i}s will be compared with their corresponding ordered sample \code{X_(i)}.
 This yields the traditional test statistics. If \code{alpha0} is used, the
-test statistics is based on \code{X_(1),...X_(k)} where k is the nearest integer of
+test statistics is based on \verb{X_(1),...X_(k)} where k is the nearest integer of
 \code{alpha0*n}. If \code{index} is provided, only \code{X_(i)} for \code{i} in \code{index} will be considered
 in a test. If \code{indexL} and/or \code{indexU} is not \code{NULL}, only \code{l_i} for \code{i} in
 \code{indexL} and \code{u_i} for \code{i} in \code{indexU} will be used in a test. These can be used to

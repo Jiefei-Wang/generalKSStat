@@ -1,3 +1,12 @@
+## The cached result
+cache <- list()
+cache$criticals <- new.env()
+
+call_func <- function(root, prefix=NULL, postfix=NULL, ...){
+    func_name <- paste0(c(prefix,root,postfix),collapse="")
+    do.call(func_name,args = list(...))
+}
+
 ## The function returns the index of non-null values
 ## if noEmpty = TRUE, return 0L when the index is empty  
 which.null<-function(..., noEmpty = FALSE){
@@ -43,76 +52,64 @@ all.null<-function(...){
     all(res)
 }
 
-getIndexSimple<-function(n,alpha0,index){
-    if(!is.null(n)&&!is.null(alpha0)&&is.null(index)){
-        nRegion <- max(floor(alpha0 * n), 1)
-        index <- seq_len(nRegion)
-    }
-    index
-}
-
-getIndex <- function(n,alpha0,index=NULL,indexL=NULL,indexU=NULL){
-    if(!is.null(index)&&!all.null(indexL,indexU)){
-        stop("The argument `index` and arguments `indexL`, `indexU`
-             cannot be both non-null")
-    }
-    firstNonNull <- which.firstNonNull(indexL,indexU,index,alpha0,noEmpty=TRUE)
-    if(firstNonNull==0L){
-        stop("The range argument `alpha0` and `index` are both null")
-    }else if(firstNonNull==4L){
-        if(is.null(n))stop("The sample size is missing")
-        nRegion <- max(floor(alpha0 * n), 1)
-        index <- seq(1, nRegion)
-        indexL <- seq(1, nRegion)
-        indexU <- seq(1, nRegion)
-    }else if(firstNonNull==3L){
-        indexL <- index
-        indexU <- index
-    }
-    list(n = n, alpha0=alpha0,index =index,indexL=indexL,indexU=indexU)
-}
-
-
-getArgs<-function(stat,n=NULL,alpha0=NULL,index=NULL,indexL=NULL,indexU=NULL){
-    if(!is.generalKSStat(stat)){
-        if(all.null(alpha0,index,indexL,indexU)){
-            alpha0 <- 1
+getIndexOneSide<-function(n,alpha0,index,indexOneSide){
+    if(!is.null(indexOneSide)){
+        return(indexOneSide)
+    }else{
+        if(!is.null(index)){
+            return(index)
+        }else{
+            if(!is.null(n)&&!is.null(alpha0)){
+                nRegion <- max(floor(alpha0 * n), 1)
+                index <- seq_len(nRegion)
+                return(index)
+            }
         }
-        args <- getIndex(n=n,alpha0=alpha0,index=index,indexL=indexL,indexU=indexU)
-        args[["statValue"]] <- stat
-        return(args)
     }
-    if(is.null(n)){
-        n <- stat[["n"]]
-    }
-    if(all.null(alpha0,index,indexL,indexU)){
-        alpha0<-stat[["alpha0"]]
-        index<-stat[["index"]]
-        indexU<-stat[["indexU"]]
-        indexL<-stat[["indexL"]]
-    }
-    if(length(grep("+",stat$statName,fixed=TRUE))==1&&is.null(indexL)){
-        nRegion <- max(floor(alpha0 * n), 1)
-        indexL <- seq_len(nRegion)
-    }
-    if(length(grep("-",stat$statName,fixed=TRUE))==1&&is.null(indexU)){
-        nRegion <- max(floor(alpha0 * n), 1)
-        indexU <- seq_len(nRegion)
-    }
-    args <- getIndex(n=n,alpha0=alpha0,index=index,indexL=indexL,indexU=indexU)
-    args$statValue <- stat$statValue
-    args
+    NULL
 }
 
-getStatFullName <-function(statName,indexL, indexU){
-    if(!is.null(indexL)&&is.null(indexU))
-        statSign <- "+"
-    else if(is.null(indexL)&&!is.null(indexU))
-        statSign <- "-"
-    else 
-        statSign <- ""
-    paste0(statName,statSign)
+getTwoSideIndex <- function(statName,n,alpha0,index,indexL,indexU){
+    side <- substring(statName,nchar(statName))
+    oneSideInd = which(side==c("+","-"))
+    if(length(oneSideInd)!=0){
+        statName <- substr(statName,1,nchar(statName)-1)
+        if(oneSideInd==1L){
+            indexL <- getIndexOneSide(n,alpha0,index,indexL)
+            if(is.null(indexL))
+                indexL <- seq_len(n)
+            indexU <- NULL
+        }else{
+            indexU <- getIndexOneSide(n,alpha0,index,indexU)
+            if(is.null(indexU))
+                indexU <- seq_len(n)
+            indexL <- NULL
+        }
+    }else{
+        indexL <- getIndexOneSide(n,alpha0,index,indexL)
+        indexU <- getIndexOneSide(n,alpha0,index,indexU)
+        if(all.null(indexL,indexU)){
+            indexL <- seq_len(n)
+            indexU <- seq_len(n)
+        }
+    }
+    if(!is.null(n)){
+        stopifnot(length(indexL)<=n)
+        stopifnot(length(indexU)<=n)
+    }
+    list(statName = statName, side =side, indexL= indexL,indexU=indexU)
 }
+
+# 
+# getStatFullName <-function(statName,indexL, indexU){
+#     if(!is.null(indexL)&&is.null(indexU))
+#         statSign <- "+"
+#     else if(is.null(indexL)&&!is.null(indexU))
+#         statSign <- "-"
+#     else 
+#         statSign <- ""
+#     paste0(statName,statSign)
+# }
 
 is.generalKSStat<-function(x){
     is(x,"generalKSStat")

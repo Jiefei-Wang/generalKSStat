@@ -25,131 +25,89 @@
 #' @inherit GKSStat details
 #' @rdname critical
 #' @export
-GKSCritical <-function(alpha,n=NULL,alpha0=1,
+GKSCritical <-function(alpha,n,alpha0=1,
                        index=NULL,indexL=NULL,indexU= NULL,
                        statName = c("KS","KS+","KS-","BJ","BJ+","BJ-","HC","HC+","HC-")){
     statName <- match.arg(statName)
-    if(statName=="KS"){
-        stat <- KSCritical(alpha=alpha,n=n,alpha0=alpha0,
-                         index=index,indexL=indexL,indexU=indexU)
-        return(stat)
-    }
-    if(statName=="KS+"){
-        stat <- KSPlusCritical(alpha=alpha,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    if(statName=="KS-"){
-        stat <- KSMinusCritical(alpha=alpha,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    if(statName=="BJ"){
-        stat <- BJCritical(alpha=alpha,n=n,alpha0=alpha0,
-                         index=index,indexL=indexL,indexU=indexU)
-        return(stat)
-    }
-    if(statName=="BJ+"){
-        stat <- BJPlusCritical(alpha=alpha,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    if(statName=="BJ-"){
-        stat <- BJMinusCritical(alpha=alpha,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    if(statName=="HC"){
-        stat <- HCCritical(alpha=alpha,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    if(statName=="HC+"){
-        stat <- HCPlusCritical(alpha=alpha,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
-    if(statName=="HC-"){
-        stat <- HCMinusCritical(alpha=alpha,n=n,alpha0=alpha0,index=index)
-        return(stat)
-    }
+    stopifnot(!is.null(alpha))
+    stopifnot(!is.null(n))
+    sideIndex <- getTwoSideIndex(statName=statName,
+                                 n=n,
+                                 alpha0=alpha0,
+                                 index=index,
+                                 indexL=indexL,
+                                 indexU=indexU)
+    indexL <- sideIndex$indexL
+    indexU <- sideIndex$indexU
     
-    
-    
-    
+    statValue <- call_func(root = "Critical",prefix = sideIndex$statName,
+                           alpha=alpha, 
+                           n=n,
+                           indexL=indexL,
+                           indexU=indexU)
+    return(statValue)
 }
 
-genericCritical<-function(pvalueFunc, searchRange,
-                          alpha,n=NULL,alpha0=NULL,index=NULL,
+getCacheKey <- function(...){
+    args <- list(...)
+    indexL <- args$indexL
+    indexU <- args$indexU
+    if(length(indexL)>0&&!is.unsorted(indexL)){
+        args$indexL <- paste0(indexL[1],",",indexL[length(indexL)])
+    }
+    if(length(indexU)>0&&!is.unsorted(indexU)){
+        args$indexU <- paste0(indexU[1],",",indexU[length(indexU)])
+    }
+    digest::digest(args)
+}
+
+genericCritical<-function(statName, pvalueFunc, searchRange,
+                          alpha,n=NULL,
                           indexL=NULL,indexU= NULL){
+    key <- getCacheKey(statName,alpha,n,indexL,indexU)
+    ## If the cache exist, get the result from cache
+    if(!is.null(cache$criticals[[key]])){
+        return(cache$criticals[[key]])
+    }
     rootFunc=function(stat) 
         sapply(stat, function(stat)
-            pvalueFunc(stat=stat,n=n,alpha0=alpha0,
-                   index=index,indexL=indexL,indexU=indexU)-alpha)
+            pvalueFunc(stat=stat,n=n,indexL=indexL,indexU=indexU)-alpha)
     res=uniroot(rootFunc,searchRange,extendInt = "yes")
+    ## cache the result
+    cache$criticals[[key]] <- res$root
     res$root
 }
 
 
 #' @rdname critical
 #' @export
-HCCritical<-function(alpha,n=NULL,alpha0=NULL,
-                     index=NULL,indexL=NULL,indexU= NULL){
+HCCritical<-function(alpha,n=NULL,indexL=NULL,indexU= NULL){
     genericCritical(
+        statName = "HC",
         pvalueFunc= HCPvalue,searchRange=c(0,100),
-        alpha=alpha,n=n,alpha0=alpha0,index=index,
+        alpha=alpha,n=n,
         indexL=indexL,indexU= indexU
     )
 }
 
 #' @rdname critical
 #' @export
-BJCritical<-function(alpha,n=NULL,alpha0=NULL,
-                     index=NULL,indexL=NULL,indexU= NULL){
+BJCritical<-function(alpha,n=NULL,indexL=NULL,indexU= NULL){
     genericCritical(
+        statName = "BJ",
         pvalueFunc= BJPvalue,searchRange=c(0,1),
-        alpha=alpha,n=n,alpha0=alpha0,index=index,
+        alpha=alpha,n=n,
         indexL=indexL,indexU= indexU
     )
 }
 
 #' @rdname critical
 #' @export
-KSCritical<-function(alpha,n=NULL,alpha0=NULL,
-                     index=NULL,indexL=NULL,indexU= NULL){
+KSCritical<-function(alpha,n=NULL,indexL=NULL,indexU= NULL){
     genericCritical(
+        statName = "KS",
         pvalueFunc= KSPvalue,searchRange=c(0,1),
-        alpha=alpha,n=n,alpha0=alpha0,index=index,
+        alpha=alpha,n=n,
         indexL=indexL,indexU= indexU
     )
-}
-#' @rdname critical
-#' @export
-HCPlusCritical<-function(alpha,n=NULL,alpha0=NULL,index=NULL){
-    index <- getIndexSimple(n,alpha0,index)
-    HCCritical(alpha = alpha, n = n, alpha0 = alpha0, indexL = index)
-}
-#' @rdname critical
-#' @export
-HCMinusCritical<-function(alpha,n=NULL,alpha0=NULL,index=NULL){
-    index <- getIndexSimple(n,alpha0,index)
-    HCCritical(alpha = alpha, n = n, alpha0 = alpha0, indexU = index)
-}
-#' @rdname critical
-#' @export
-BJPlusCritical<-function(alpha,n=NULL,alpha0=NULL,index=NULL){
-    index <- getIndexSimple(n,alpha0,index)
-    BJCritical(alpha = alpha, n = n, alpha0 = alpha0, indexL = index)
-}
-#' @rdname critical
-#' @export
-BJMinusCritical<-function(alpha,n=NULL,alpha0=NULL,index=NULL){
-    index <- getIndexSimple(n,alpha0,index)
-    BJCritical(alpha = alpha, n = n, alpha0 = alpha0, indexU = index)
-}
-#' @rdname critical
-#' @export
-KSPlusCritical<-function(alpha,n=NULL,alpha0=NULL,index=NULL){
-    index <- getIndexSimple(n,alpha0,index)
-    KSCritical(alpha = alpha, n = n, alpha0 = alpha0, indexL = index)
-}
-#' @rdname critical
-#' @export
-KSMinusCritical<-function(alpha,n=NULL,alpha0=NULL,index=NULL){
-    index <- getIndexSimple(n,alpha0,index)
-    KSCritical(alpha = alpha, n = n, alpha0 = alpha0, indexU = index)
 }
