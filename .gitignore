@@ -38,9 +38,9 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-inst/
 *.Rproj
 inst/doc
+inst/test
 
 src-i386/
 src-x64/

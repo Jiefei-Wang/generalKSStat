@@ -2,7 +2,7 @@ Package: generalKSStat
 Type: Package
 Title: Computes goodness-of-fit test statistics such as the 
     Kolmogorov-Smirnov, Berk-Jones and the higher criticism statistics
-Version: 1.0.0
+Version: 0.99.0
 Date: 2020-02-17
 Author: Jiefei Wang
 Maintainer: Jiefei Wang<jwang96@buffalo.edu>
