@@ -4,6 +4,7 @@
 \alias{print.generalKSStat}
 \alias{getStatName}
 \alias{getStatValue}
+\alias{getSampleSize}
 \alias{getPvalue}
 \title{Class methods for the generalKSStat S3 object}
 \usage{
@@ -12,6 +13,8 @@
 getStatName(x)
 
 getStatValue(x)
+
+getSampleSize(x)
 
 getPvalue(x)
 }

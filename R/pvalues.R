@@ -5,9 +5,9 @@
 #' 
 #' @param x Numeric, the sample data.
 #' @param stat a `generalKSStat` object or numeric, the statistic that the p-value
-#' is computed for. This parameter will be ignored if the parameter `x` is not null.
-#' If `stat` is a `generalKSStat` object, there is no need to 
-#' specify the other parameters unless you want to overwrite them.
+#' is computed for. If `stat` is a `generalKSStat` object, all other parameters will 
+#' be ignored. Otherwise, this parameter will be suppressed if the parameter `x` 
+#' is not null.
 #' If a numeric value is provided to the parameter `stat`, you must at least 
 #' specify the sample size `n`.
 #' @param n Integer, the sample size of the data.
@@ -41,13 +41,13 @@
 #' @rdname pvalue
 #' @export
 GKSPvalue<-function(stat=NULL , n =NULL, alpha0 = NULL, 
-                     index=NULL,indexL=NULL,indexU=NULL,
-                     x=NULL, statName = NULL){
+                    index=NULL,indexL=NULL,indexU=NULL,
+                    x=NULL, statName = NULL){
     
     if(is.generalKSStat(stat)){
-        statName <- stat$statName
-        statValue <- stat$statValue
-        n <- stat$n
+        statName <- getStatName(stat)
+        statValue <- getStatValue((stat))
+        n <- getSampleSize(stat)
         indexL <- stat$indexL
         indexU <- stat$indexU
     }else{
@@ -82,7 +82,7 @@ GKSPvalue<-function(stat=NULL , n =NULL, alpha0 = NULL,
 
 genericPvalue<-function(statName,statValue ,n=n,indexL,indexU){
     localCritical <- call_func(root = statName,postfix = "LocalCritical",
-              stat=statValue,n=n)
+                               stat=statValue,n=n)
     l=localCritical$l
     h=localCritical$h
     if(length(indexL)!=0){
@@ -100,21 +100,16 @@ genericPvalue<-function(statName,statValue ,n=n,indexL,indexU){
 
 
 
-#' @rdname pvalue
-#' @export
+
 HCPvalue<-function(stat,n,indexL=NULL,indexU=NULL){
     res=1-genericPvalue("HC",statValue=stat,n=n,indexL=indexL,indexU =indexU)
 }
 
 
-#' @rdname pvalue
-#' @export
 BJPvalue<-function(stat,n,indexL=NULL,indexU=NULL){
     res=1-genericPvalue("BJ",statValue=stat,n=n,indexL=indexL,indexU =indexU)
 }
 
-#' @rdname pvalue
-#' @export
 KSPvalue<-function(stat,n,indexL=NULL,indexU=NULL){
     res=1-genericPvalue("KS",statValue=stat,n=n,indexL=indexL,indexU =indexU)
 }

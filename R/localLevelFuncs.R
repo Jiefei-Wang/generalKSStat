@@ -17,8 +17,8 @@ HCLevel <- function(n, x, sx, indexU, indexL) {
 BJPlusLevel <- function(n, x, sx, index) {
   if (length(index) == 0)
     return(numeric(0))
-  sapply(seq_along(x)[index], function(x)
-    pbeta(sx[x], x, n - x + 1))
+  vapply(seq_along(x)[index], function(x)
+    pbeta(sx[x], x, n - x + 1),numeric(1))
 }
 BJMinusLevel <- function(n, x, sx, index) {
   if (length(index) == 0)
@@ -82,14 +82,14 @@ HCLocalCritical<-function(stat,n){
 }
 
 BJLocalCritical<-function(stat,n){
-  l=sapply(1:n,function(x)qbeta(stat,x,n-x+1))
-  h=sapply(1:n,function(x)qbeta(1 - stat,x,n-x+1))
+  l=vapply(seq_len(n),function(x)qbeta(stat,x,n-x+1),numeric(1))
+  h=vapply(seq_len(n),function(x)qbeta(1 - stat,x,n-x+1),numeric(1))
   list(l =l,h= h)
 }
 
 KSLocalCritical<-function(stat,n){
-  l <- 1:n/n - stat
-  h <- stat + 1:n/n-1/n
+  l <- seq_len(n)/n - stat
+  h <- stat + seq_len(n)/n-1/n
   l[l<0]=0
   h[h>1]=1
   list(l =l,h= h)

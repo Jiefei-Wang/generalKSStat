@@ -2,6 +2,23 @@ context("Test statistics")
 x <- 1:9/10
 index <- c(2,3)
 
+test_that("empty data",{
+    stat <- GKSStat(c(),statName = "KS")
+    expect_true(is.na(stat$pvalue))
+    expect_equal(stat$n,0)
+    expect_equal(stat$statValue,0)
+    
+    stat <- GKSStat(c(),statName = "BJ")
+    expect_true(is.na(stat$pvalue))
+    expect_equal(stat$n,0)
+    expect_equal(stat$statValue,1)
+    
+    stat <- GKSStat(c(),statName = "HC")
+    expect_true(is.na(stat$pvalue))
+    expect_equal(stat$n,0)
+    expect_equal(stat$statValue,0)
+})
+
 test_that("KS",{
     stat <- GKSStat(x=x,index=index,statName = "KS",pvalue=TRUE)
     expect_equal(round(stat$statValue,3),0.089)

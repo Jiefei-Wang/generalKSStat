@@ -41,3 +41,6 @@ vignettes/*.pdf
 inst/
 *.Rproj
 inst/doc
+
+src-i386/
+src-x64/

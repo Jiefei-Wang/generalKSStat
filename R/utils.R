@@ -59,7 +59,7 @@ getIndexOneSide<-function(n,alpha0,index,indexOneSide){
         if(!is.null(index)){
             return(index)
         }else{
-            if(!is.null(n)&&!is.null(alpha0)){
+            if(!is.null(n)&&n>0&&!is.null(alpha0)){
                 nRegion <- max(floor(alpha0 * n), 1)
                 index <- seq_len(nRegion)
                 return(index)

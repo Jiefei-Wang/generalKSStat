@@ -70,8 +70,8 @@ genericCritical<-function(statName, pvalueFunc, searchRange,
         return(cache$criticals[[key]])
     }
     rootFunc=function(stat) 
-        sapply(stat, function(stat)
-            pvalueFunc(stat=stat,n=n,indexL=indexL,indexU=indexU)-alpha)
+        vapply(stat, function(stat)
+            pvalueFunc(stat=stat,n=n,indexL=indexL,indexU=indexU)-alpha,numeric(1))
     res=uniroot(rootFunc,searchRange,extendInt = "yes")
     ## cache the result
     cache$criticals[[key]] <- res$root
@@ -79,8 +79,7 @@ genericCritical<-function(statName, pvalueFunc, searchRange,
 }
 
 
-#' @rdname critical
-#' @export
+
 HCCritical<-function(alpha,n=NULL,indexL=NULL,indexU= NULL){
     genericCritical(
         statName = "HC",
@@ -90,8 +89,6 @@ HCCritical<-function(alpha,n=NULL,indexL=NULL,indexU= NULL){
     )
 }
 
-#' @rdname critical
-#' @export
 BJCritical<-function(alpha,n=NULL,indexL=NULL,indexU= NULL){
     genericCritical(
         statName = "BJ",
@@ -101,8 +98,6 @@ BJCritical<-function(alpha,n=NULL,indexL=NULL,indexU= NULL){
     )
 }
 
-#' @rdname critical
-#' @export
 KSCritical<-function(alpha,n=NULL,indexL=NULL,indexU= NULL){
     genericCritical(
         statName = "KS",

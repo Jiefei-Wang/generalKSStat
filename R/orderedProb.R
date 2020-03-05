@@ -38,6 +38,7 @@ get_h <- function(value,func_data){
 
 
 orderedProb <- function(l,h){
+    if(length(l)==0) return(NA)
     if(any(l>=h)) return(0)
     n <- length(l)
     for(i in seq_len(n-1)){

@@ -1,14 +1,18 @@
 Package: generalKSStat
 Type: Package
-Title: The package computes goodness-of-fit test statistics such as the 
+Title: Computes goodness-of-fit test statistics such as the 
     Kolmogorov-Smirnov, Berk-Jones and the higher criticism statistics
 Version: 1.0.0
 Date: 2020-02-17
 Author: Jiefei Wang
-Maintainer: <jwang96@buffalo.edu>
+Maintainer: Jiefei Wang<jwang96@buffalo.edu>
 Description: The package computes goodness-of-fit test statistics and their p-values
     using the Exact-KS-FFT method developed by Dimitrova, Kaishev, Tan (2017). 
     The algorithm works for the sample size up to 25,000.
+biocViews: 
+    MultipleComparison, 
+    Software, 
+    StatisticalMethod
 License: GPL-3
 SystemRequirements: C++11
 RoxygenNote: 7.0.2

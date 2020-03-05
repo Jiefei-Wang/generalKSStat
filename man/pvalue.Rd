@@ -2,9 +2,6 @@
 % Please edit documentation in R/pvalues.R
 \name{GKSPvalue}
 \alias{GKSPvalue}
-\alias{HCPvalue}
-\alias{BJPvalue}
-\alias{KSPvalue}
 \title{Compute the pvalue of generalized Kolmogorov-Smirnov test statistics}
 \usage{
 GKSPvalue(
@@ -17,18 +14,12 @@ GKSPvalue(
   x = NULL,
   statName = NULL
 )
-
-HCPvalue(stat, n, indexL = NULL, indexU = NULL)
-
-BJPvalue(stat, n, indexL = NULL, indexU = NULL)
-
-KSPvalue(stat, n, indexL = NULL, indexU = NULL)
 }
 \arguments{
 \item{stat}{a \code{generalKSStat} object or numeric, the statistic that the p-value
-is computed for. This parameter will be ignored if the parameter \code{x} is not null.
-If \code{stat} is a \code{generalKSStat} object, there is no need to
-specify the other parameters unless you want to overwrite them.
+is computed for. If \code{stat} is a \code{generalKSStat} object, all other parameters will
+be ignored. Otherwise, this parameter will be suppressed if the parameter \code{x}
+is not null.
 If a numeric value is provided to the parameter \code{stat}, you must at least
 specify the sample size \code{n}.}
 
@@ -61,35 +52,38 @@ see details on how to use the function.
 \details{
 \bold{statistics definitions}
 
-The function compute the test statistics which defines the geometrical
-distance between the null distribution and empirical distribution based on
-the ordered samples, that is, if \code{T} is a statistic and \code{X_1},\code{X_2},...,\code{X_n}
-are the samples, the value of \code{T} is purely based on the value of
-\code{X_(1)},\code{X_(2)},...,\code{X_(n)}, where \code{X_(i)} is the ith ordered samples
-of \code{X1},\code{X2},...,\code{Xn}. Moreover, the rejection region of the
-statistic \code{T} can be written as a set of rejection regions of the
-ordered samples \code{X_(1)},\code{X_(2)},...,\code{X_(n)}. In other words,
-there exist two sequences \code{{l_i}} and \code{{u_i}} for \verb{i=1,...,n} and
-the statistic \code{T} is in the rejection region if and only if there exist
+The function compute the test statistics which aggregate the significant signal
+from the order statistics of the samples, that is, if \code{T} is a statistic
+and \code{X_1},\code{X_2},...,\code{X_n} are the samples, the value of \code{T} is purely
+based on the value of \code{X_(1)},\code{X_(2)},...,\code{X_(n)},
+where \code{X_(i)} is the ith ascending sorted samples of \code{X1},\code{X2},...,\code{Xn}.
+Moreover, the rejection region of the statistic \code{T} can be written as
+a set of rejection regions of the ordered samples \code{X_(1)},\code{X_(2)},...,\code{X_(n)}.
+In other words, there exist two sequences \code{{l_i}} and \code{{u_i}} for \verb{i=1,...,n}
+and the statistic \code{T} is rejected if and only if there exist
 one \code{i} such that \code{X_(i) < l_i} or \code{X_(i) > u_i}.
 
 The most well-known statistic which takes this form is the Kolmogorov-Smirnov
 statistic. Other statistics like Berk-Jones or the higher criticism also have
-the same form but define different sets of \code{{l_i}} and \code{{u_i}}.
+similar formulas but define different sets of \code{{l_i}} and \code{{u_i}}.
 
 \bold{alpha0, index, indexL and indexU}
 
 As mentioned previouly, the rejection of a test can be determined by the
 sequences of \code{{l_i}} and \code{{u_i}}. Therefore, the parameter \code{alpha0}, \code{index}
-\code{indexL} and \code{indexU}. provide a fine control of which \code{l_i} and \code{u_i}
+\code{indexL} and \code{indexU}. provide a way to control which \code{l_i} and \code{u_i}
 will be considered in the test procedure. If no argument is provided, all \code{l_i}s
-and \code{u_i}s will be compared with their corresponding ordered sample \code{X_(i)}.
-This yields the traditional test statistics. If \code{alpha0} is used, the
-test statistics is based on \verb{X_(1),...X_(k)} where k is the nearest integer of
-\code{alpha0*n}. If \code{index} is provided, only \code{X_(i)} for \code{i} in \code{index} will be considered
-in a test. If \code{indexL} and/or \code{indexU} is not \code{NULL}, only \code{l_i} for \code{i} in
-\code{indexL} and \code{u_i} for \code{i} in \code{indexU} will be used in a test. These can be used to
-generate an one-sided version of the test statistic.
+and \code{u_i}s will be compared with their corresponding sorted sample \code{X_(i)}.
+This yields the traditional test statistics. If \code{alpha0} is used, only
+the data \verb{X_(1),...X_(k)} will be used in the test where \code{k} is the nearest
+integer of \code{alpha0*n}. If \code{index} is provided, only \code{X_(i)} for \code{i} in \code{index}
+will be considered in the test. If \code{indexL} and/or \code{indexU} is not \code{NULL},
+only \code{l_i} for \code{i} in \code{indexL} and \code{u_i} for \code{i} in \code{indexU} will be used as the
+rejection boundary for the test. These can be used to generate an one-sided version
+of the test statistic. For example, if \code{indexL} is from \code{1} to the length of \code{x} and
+\code{indexU} is \code{NULL}, this will yield a test specifically sensitive to smaller samples.
+The test statistics like \verb{KS+}, \verb{HC+} and \verb{BJ+} are implemented by calling
+\code{GKSStat(..., indexU = NULL)}, where \code{indexU} is always \code{NULL}.
 }
 \examples{
 ## Generate samples

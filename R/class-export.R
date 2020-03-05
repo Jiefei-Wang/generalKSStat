@@ -6,7 +6,6 @@
     stat[["indexU"]]=indexU
     structure(stat,class = "generalKSStat")
 }
-
 #' Class methods for the generalKSStat S3 object
 #' 
 #' 
@@ -30,11 +29,11 @@ print.generalKSStat <- function(x,...){
     #print(x$statValue)
     # class(x)=NULL
     # print(x)
-    cat("The", x$statName, "test statistics\n")
-    cat("Sample size:",x$n,"\n")
-    cat("Stat value:", x$statValue,"\n")
-    if(!is.null(x$pvalue))
-        cat("P-value:", x$pvalue)
+    cat("The", getStatName(x), "test statistics\n")
+    cat("Sample size:",getSampleSize(x),"\n")
+    cat("Stat value:", getStatValue(x),"\n")
+    if(!is.null(getPvalue(x)))
+        cat("P-value:", getPvalue(x))
     invisible(x)
 }
 
@@ -47,6 +46,11 @@ getStatName<-function(x){
 #' @export
 getStatValue<-function(x){
     x$statValue
+}
+#' @rdname classMethod
+#' @export
+getSampleSize <- function(x){
+    x$n
 }
 #' @rdname classMethod
 #' @export
