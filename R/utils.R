@@ -1,6 +1,6 @@
 ## The cached result
-cache <- list()
-cache$criticals <- new.env()
+# cache <- list()
+# cache$criticals <- new.env()
 
 call_func <- function(root, prefix=NULL, postfix=NULL, ...){
     func_name <- paste0(c(prefix,root,postfix),collapse="")
@@ -86,8 +86,11 @@ getTwoSideIndex <- function(statName,n,alpha0,index,indexL,indexU){
             indexL <- NULL
         }
     }else{
-        indexL <- getIndexOneSide(n,alpha0,index,indexL)
-        indexU <- getIndexOneSide(n,alpha0,index,indexU)
+        if(all.null(indexL,indexU)){
+              indexL <- getIndexOneSide(n,alpha0,index,indexL)
+              indexU <- getIndexOneSide(n,alpha0,index,indexU)
+        }
+        
         if(all.null(indexL,indexU)){
             indexL <- seq_len(n)
             indexU <- seq_len(n)

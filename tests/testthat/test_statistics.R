@@ -107,3 +107,33 @@ test_that("HC-",{
     expect_equal(round(stat$statValue,3),1)
     expect_equal(round(stat$pvalue,3),0.746)
 })
+
+
+
+
+statNameList <-c("KS","BJ","HC")
+x <- runif(10L)
+for(k in seq_along(statNameList)){
+    statName <- statNameList[k]
+    test_that(paste0("oneside ",statName),{
+        ## + side
+        stat1 <- GKSStat(x=x,indexL=index,statName = statName,pvalue=TRUE)
+        stat2 <- GKSStat(x=x,indexL=index,statName = paste0(statName,"+"),pvalue=TRUE)
+        stat3 <- GKSStat(x=x,index=index,statName = paste0(statName,"+"),pvalue=TRUE)
+        expect_equal(stat1,stat2)
+        expect_equal(stat1,stat3)
+        
+        ## - side
+        stat4 <- GKSStat(x=x,indexU=index,statName = statName,pvalue=TRUE)
+        stat5 <- GKSStat(x=x,indexU=index,statName = paste0(statName,"-"),pvalue=TRUE)
+        stat6 <- GKSStat(x=x,index=index,statName = paste0(statName,"-"),pvalue=TRUE)
+        expect_equal(stat4,stat5)
+        expect_equal(stat4,stat6)
+        
+        ## error on purpose
+        stat7 <- GKSStat(x=x,indexL=index,statName = paste0(statName,"-"),pvalue=TRUE)
+        stat8 <- GKSStat(x=x,statName = paste0(statName,"-"),pvalue=TRUE)
+        expect_equal(stat7,stat8)
+    })
+}
+

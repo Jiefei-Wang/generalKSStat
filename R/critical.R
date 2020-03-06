@@ -64,17 +64,17 @@ getCacheKey <- function(...){
 genericCritical<-function(statName, pvalueFunc, searchRange,
                           alpha,n=NULL,
                           indexL=NULL,indexU= NULL){
-    key <- getCacheKey(statName,alpha,n,indexL,indexU)
-    ## If the cache exist, get the result from cache
-    if(!is.null(cache$criticals[[key]])){
-        return(cache$criticals[[key]])
-    }
+    # key <- getCacheKey(statName,alpha,n,indexL,indexU)
+    # ## If the cache exist, get the result from cache
+    # if(!is.null(cache$criticals[[key]])){
+    #     return(cache$criticals[[key]])
+    # }
     rootFunc=function(stat) 
         vapply(stat, function(stat)
             pvalueFunc(stat=stat,n=n,indexL=indexL,indexU=indexU)-alpha,numeric(1))
     res=uniroot(rootFunc,searchRange,extendInt = "yes")
     ## cache the result
-    cache$criticals[[key]] <- res$root
+    # cache$criticals[[key]] <- res$root
     res$root
 }
 
