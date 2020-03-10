@@ -48,18 +48,18 @@ GKSCritical <-function(alpha,n,alpha0=1,
     return(statValue)
 }
 
-getCacheKey <- function(...){
-    args <- list(...)
-    indexL <- args$indexL
-    indexU <- args$indexU
-    if(length(indexL)>0&&!is.unsorted(indexL)){
-        args$indexL <- paste0(indexL[1],",",indexL[length(indexL)])
-    }
-    if(length(indexU)>0&&!is.unsorted(indexU)){
-        args$indexU <- paste0(indexU[1],",",indexU[length(indexU)])
-    }
-    digest::digest(args)
-}
+# getCacheKey <- function(...){
+#     args <- list(...)
+#     indexL <- args$indexL
+#     indexU <- args$indexU
+#     if(length(indexL)>0&&!is.unsorted(indexL)){
+#         args$indexL <- paste0(indexL[1],",",indexL[length(indexL)])
+#     }
+#     if(length(indexU)>0&&!is.unsorted(indexU)){
+#         args$indexU <- paste0(indexU[1],",",indexU[length(indexU)])
+#     }
+#     digest::digest(args)
+# }
 
 genericCritical<-function(statName, pvalueFunc, searchRange,
                           alpha,n=NULL,
