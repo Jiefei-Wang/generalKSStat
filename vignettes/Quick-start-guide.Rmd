@@ -1,8 +1,8 @@
 ---
-title: "Vignette"
+title: "Quick-start-guide"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette}
+  %\VignetteIndexEntry{Quick-start-guide}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -139,11 +139,3 @@ which will yield the same results as the previous code chunk shows.
 ```{r}
 sessionInfo()
 ```
-
-
-
-
-
-
-
-
