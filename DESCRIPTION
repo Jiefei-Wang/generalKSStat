@@ -2,7 +2,7 @@ Package: generalKSStat
 Type: Package
 Title: Computes KS-Like Goodness-of-Fit Test Statistics
 Version: 1.0.2
-Date: 2020-02-17
+Date: 2020-03-23
 Author: Jiefei Wang
 Maintainer: Jiefei Wang<jwang96@buffalo.edu>
 Description: Computing KS-like goodness-of-fit test statistics  Such as the 
