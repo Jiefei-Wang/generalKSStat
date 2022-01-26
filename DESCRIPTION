@@ -3,8 +3,13 @@ Type: Package
 Title: Computes KS-Like Goodness-of-Fit Test Statistics
 Version: 1.0.3
 Date: 2020-03-23
-Author: Jiefei Wang
-Maintainer: Jiefei Wang<jwang96@buffalo.edu>
+Authors@R: c(
+    person(
+        "Jiefei", "Wang",
+        email = "szwjf08@gmail.com",
+        role = c("aut", "cre")
+    ),
+    person("Jeffrey", "Miecznikowski", role = "aut"))
 Description: Computing KS-like goodness-of-fit test statistics such as the 
     Kolmogorov-Smirnov, Berk-Jones and the higher criticism statistics. 
     The p-values are computed via the Exact-KS-FFT(fast Fourier transform) method 
